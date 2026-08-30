@@ -1,0 +1,116 @@
+/* SmartSurplus Reusable Leaflet Map Styles */
+.map-container-wrapper {
+  width: 100%;
+  height: 400px;
+  min-height: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  position: relative;
+  background: #f3f4f6;
+}
+
+@media screen and (max-width: 768px) {
+  .map-container-wrapper {
+    height: 300px;
+    min-height: 250px;
+  }
+}
+
+.smartsurplus-map-pin {
+  background: transparent !important;
+  border: none !important;
+}
+
+.smartsurplus-map-pin:hover .custom-marker-pin {
+  transform: scale(1.15) translateY(-2px);
+}
+
+.map-legend-overlay {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 999;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #1f2937;
+  pointer-events: none;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.legend-dot.green { background-color: #16a34a; }
+.legend-dot.blue { background-color: #0284c7; }
+.legend-dot.orange { background-color: #d97706; }
+
+/* Custom Leaflet Popup Card Styling */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  padding: 4px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid #f3f4f6;
+}
+.leaflet-popup-content {
+  margin: 10px 14px !important;
+  font-family: inherit !important;
+  font-size: 0.85rem !important;
+  line-height: 1.5 !important;
+  color: #1f2937 !important;
+}
+
+.smartsurplus-vehicle-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+@keyframes mapPulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.6);
+    opacity: 0.15;
+  }
+  100% {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+}
+
+.map-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #15803d;
+  z-index: 1000;
+  font-size: 0.95rem;
+}

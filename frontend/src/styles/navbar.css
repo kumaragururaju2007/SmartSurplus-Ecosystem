@@ -1,0 +1,457 @@
+.navbar {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.navbar-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0.85rem 2rem !important;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  box-sizing: border-box;
+}
+
+/* Extreme Left Logo & Brand Title */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  color: #15803d;
+  text-decoration: none;
+  margin-right: auto;
+  flex-shrink: 0;
+}
+
+.navbar-logo-icon {
+  width: 34px;
+  height: 34px;
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+/* Extreme Right Links (Public / Unauthenticated) */
+.navbar-links {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  list-style: none;
+  padding: 0;
+}
+
+.navbar-item a {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #374151;
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.navbar-item a:hover:not(.navbar-get-started-btn), .navbar-item a.active:not(.navbar-get-started-btn) {
+  color: #16a34a;
+  background: #f0fdf4;
+}
+
+/* ========================================================
+   ATTRACTIVE & PROMINENT "GET STARTED" CTA BUTTON
+   ======================================================== */
+.navbar-get-started-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  background: linear-gradient(135deg, #10b981 0%, #16a34a 55%, #15803d 100%) !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 0.95rem !important;
+  padding: 0.65rem 1.45rem !important;
+  border-radius: 999px !important;
+  text-decoration: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.42), 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  letter-spacing: 0.01em;
+  position: relative;
+  overflow: hidden;
+}
+
+.navbar-get-started-btn:hover {
+  background: linear-gradient(135deg, #059669 0%, #15803d 55%, #166534 100%) !important;
+  color: #ffffff !important;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.55), 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.navbar-get-started-btn:active {
+  transform: translateY(0px) scale(0.98);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35) !important;
+}
+
+.user-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #166534;
+  white-space: nowrap;
+}
+
+/* ========================================================
+   AUTHENTICATED PORTAL HEADER STYLING (ADMIN, DONOR, BIOGAS, NGO)
+   (Extreme Left <--------------------------> Extreme Right)
+   ======================================================== */
+.navbar.admin-navbar, 
+.navbar.donor-navbar, 
+.navbar.biogas-navbar {
+  width: 100%;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.navbar-container.admin-header, 
+.navbar-container.donor-header,
+.navbar-container.biogas-header {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0.85rem 2rem !important;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  box-sizing: border-box;
+}
+
+.admin-header-right, 
+.donor-header-right,
+.biogas-header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-shrink: 0;
+}
+
+.admin-header-bell, 
+.donor-header-bell,
+.biogas-header-bell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #374151;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  min-width: 38px;
+  min-height: 38px;
+}
+
+.admin-header-bell:hover, 
+.donor-header-bell:hover,
+.biogas-header-bell:hover {
+  background: #f3f4f6;
+  color: #16a34a;
+}
+
+.admin-unread-badge, 
+.donor-unread-badge,
+.biogas-unread-badge {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0.1rem 0.38rem;
+  border-radius: 999px;
+  line-height: 1;
+}
+
+.admin-profile-badge, 
+.donor-profile-badge,
+.biogas-profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #166534;
+  white-space: nowrap;
+}
+
+.admin-header-logout-btn, 
+.donor-header-logout-btn,
+.biogas-header-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  border-radius: 8px;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #dc2626;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 38px;
+}
+
+.admin-header-logout-btn:hover, 
+.donor-header-logout-btn:hover,
+.biogas-header-logout-btn:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+/* ========================================================
+   MOBILE HAMBURGER BUTTON & FULL-SCREEN DRAWER STYLES
+   ======================================================== */
+.navbar-mobile-toggle-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: #1f2937;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  margin-left: auto;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.navbar-mobile-toggle-btn:hover {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.navbar-mobile-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.navbar-mobile-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: fadeIn 0.25s ease-out;
+}
+
+.navbar-mobile-drawer {
+  position: relative;
+  width: 320px;
+  max-width: 85vw;
+  height: 100%;
+  background: #ffffff;
+  box-shadow: -4px 0 25px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1.25rem;
+  overflow-y: auto;
+  z-index: 10;
+  animation: slideLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.navbar-mobile-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 1.25rem;
+}
+
+.navbar-mobile-close-btn {
+  background: #f3f4f6;
+  border: none;
+  color: #4b5563;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navbar-mobile-close-btn:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.navbar-mobile-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.navbar-mobile-link {
+  display: block;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #374151;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.navbar-mobile-link:hover, .navbar-mobile-link:active {
+  background: #f0fdf4;
+  color: #15803d;
+  transform: translateX(4px);
+}
+
+.navbar-mobile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.navbar-mobile-btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.85rem 1.25rem;
+  background: linear-gradient(135deg, #10b981 0%, #16a34a 100%);
+  color: white;
+  font-weight: 800;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  transition: all 0.2s ease;
+}
+
+.navbar-mobile-btn-primary:active {
+  transform: scale(0.98);
+}
+
+.navbar-mobile-btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.8rem 1.25rem;
+  background: #ffffff;
+  color: #16a34a;
+  border: 1.5px solid #bbf7d0;
+  font-weight: 700;
+  font-size: 0.92rem;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.navbar-mobile-btn-secondary:hover {
+  background: #f0fdf4;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideLeft {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+/* ========================================================
+   RESPONSIVE NAVBAR MEDIA QUERIES
+   ======================================================== */
+@media screen and (max-width: 900px) {
+  .navbar-desktop-links {
+    display: none !important;
+  }
+  .navbar-mobile-toggle-btn {
+    display: inline-flex !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .navbar-container {
+    padding: 0.75rem 1rem !important;
+  }
+  
+  .navbar-brand .navbar-brand-text {
+    font-size: 1.15rem;
+  }
+
+  .admin-header-right,
+  .donor-header-right,
+  .biogas-header-right {
+    gap: 0.6rem;
+  }
+
+  .admin-profile-badge,
+  .donor-profile-badge,
+  .biogas-profile-badge {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.8rem;
+  }
+
+  .admin-logout-label,
+  .donor-logout-label {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .admin-profile-name,
+  .donor-profile-name {
+    display: none;
+  }
+  .navbar-brand .navbar-brand-text {
+    font-size: 1.05rem;
+  }
+}
+

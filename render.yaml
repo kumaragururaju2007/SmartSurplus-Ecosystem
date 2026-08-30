@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: smartsurplus-app
+    runtime: node
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: smartsurplus-db
+          property: connectionString
+      - key: SMS_MODE
+        value: mock
+      - key: PAYMENT_MODE
+        value: mock
+
+databases:
+  - name: smartsurplus-db
+    plan: free
+    databaseName: smart_surplus
+    user: postgres

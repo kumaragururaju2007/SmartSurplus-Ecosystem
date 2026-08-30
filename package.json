@@ -1,0 +1,16 @@
+{
+  "name": "smartsurplus-root",
+  "private": true,
+  "version": "1.0.0",
+  "description": "SmartSurplus Ecosystem Root Package",
+  "scripts": {
+    "dev": "node scripts/start-all.js",
+    "start": "node backend/server.js",
+    "build": "npm --prefix backend install && npm --prefix frontend install && npm --prefix frontend run build",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "db:init": "npm --prefix backend run db:init",
+    "db:clean": "node backend/database/clearFakeData.js",
+    "test": "npm --prefix backend test"
+  }
+}

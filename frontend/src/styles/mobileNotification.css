@@ -1,0 +1,240 @@
+/* ========================================================
+   MOBILE & RESPONSIVE REAL-TIME NOTIFICATION POPUP TOAST
+   ======================================================== */
+
+.mobile-notification-toast-wrapper {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 24px);
+  max-width: 440px;
+  z-index: 999999;
+  pointer-events: auto;
+  animation: slideDownMobile 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideDownMobile {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+.mobile-notification-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 18px;
+  padding: 1rem 1.15rem 0.85rem;
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  border-left: 5px solid #16a34a;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mobile-notification-card:hover {
+  box-shadow: 0 25px 55px -10px rgba(0, 0, 0, 0.3);
+}
+
+/* Card Role Border Accents */
+.mobile-notification-card.card-ngo {
+  border-left-color: #16a34a;
+}
+
+.mobile-notification-card.card-biogas {
+  border-left-color: #d97706;
+}
+
+.mobile-notification-card.card-donor {
+  border-left-color: #0284c7;
+}
+
+/* Toast Top Header Row */
+.mobile-toast-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.mobile-toast-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding: 0.22rem 0.65rem;
+  border-radius: 999px;
+  letter-spacing: 0.2px;
+}
+
+.mobile-toast-actions-top {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.mobile-toast-time {
+  font-size: 0.74rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.mobile-toast-close {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 0.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.mobile-toast-close:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Toast Body */
+.mobile-toast-body {
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+}
+
+.mobile-toast-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+  line-height: 1.35;
+}
+
+.mobile-toast-message {
+  font-size: 0.86rem;
+  color: #475569;
+  line-height: 1.45;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 2.9em;
+}
+
+/* Toast Footer & Button */
+.mobile-toast-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.mobile-toast-action-btn {
+  background: #0f172a;
+  color: #ffffff;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.4rem 0.95rem;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+}
+
+.card-ngo .mobile-toast-action-btn {
+  background: #16a34a;
+}
+
+.card-ngo .mobile-toast-action-btn:hover {
+  background: #15803d;
+  transform: translateY(-1px);
+}
+
+.card-biogas .mobile-toast-action-btn {
+  background: #d97706;
+}
+
+.card-biogas .mobile-toast-action-btn:hover {
+  background: #b45309;
+  transform: translateY(-1px);
+}
+
+.card-donor .mobile-toast-action-btn {
+  background: #0284c7;
+}
+
+.card-donor .mobile-toast-action-btn:hover {
+  background: #0369a1;
+  transform: translateY(-1px);
+}
+
+/* Progress Countdown Bar */
+.mobile-toast-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #f1f5f9;
+}
+
+.mobile-toast-progress-fill {
+  height: 100%;
+  width: 100%;
+  background: #16a34a;
+  animation: shrinkProgress 8s linear forwards;
+}
+
+.card-biogas .mobile-toast-progress-fill {
+  background: #d97706;
+}
+
+.card-donor .mobile-toast-progress-fill {
+  background: #0284c7;
+}
+
+@keyframes shrinkProgress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+/* Responsive Positioning */
+@media (min-width: 768px) {
+  .mobile-notification-toast-wrapper {
+    top: 20px;
+    right: 24px;
+    left: auto;
+    transform: none;
+    max-width: 400px;
+    animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(40px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+  }
+}
