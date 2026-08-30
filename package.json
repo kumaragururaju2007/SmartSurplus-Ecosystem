@@ -12,5 +12,8 @@
     "db:init": "npm --prefix backend run db:init",
     "db:clean": "node backend/database/clearFakeData.js",
     "test": "npm --prefix backend test"
+  },
+  "engines": {
+    "node": ">=18.0.0 <=22.x"
   }
 }
