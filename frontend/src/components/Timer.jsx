@@ -3,6 +3,7 @@ import { Clock, AlertTriangle, XCircle, CheckCircle2, Zap, Truck } from 'lucide-
 
 /**
  * Safely parse diverse date formats (ISO strings, SQL timestamps, Unix epoch ms, Date objects)
+ * Always respects UTC timestamps from PostgreSQL/Render cloud database without local time drift.
  */
 function parseTargetTime(val) {
   if (!val) return null;
@@ -12,12 +13,27 @@ function parseTargetTime(val) {
     const trimmed = val.trim();
     if (!trimmed) return null;
 
-    // Handle standard ISO or SQL "YYYY-MM-DD HH:mm:ss"
-    const isoFormatted = trimmed.includes(' ') && !trimmed.includes('T') ? trimmed.replace(' ', 'T') : trimmed;
-    const parsed = new Date(isoFormatted);
-    if (!isNaN(parsed.getTime())) return parsed.getTime();
+    // 1. If it already has an explicit timezone indicator ('Z', '+HH:mm', '-HH:mm')
+    // e.g. "2026-08-31T02:07:00.000Z" or "2026-08-31T07:37:00+05:30"
+    if (/[Z+-]\d{2}:?\d{2}$|Z$/i.test(trimmed)) {
+      const parsed = new Date(trimmed);
+      if (!isNaN(parsed.getTime())) return parsed.getTime();
+    }
 
-    // Fallback: parse numbers if passed as numeric string
+    // 2. If it's a standard SQL timestamp string without timezone (e.g. "2026-08-31 02:07:00")
+    // Database stores UTC timestamps, so append 'Z' to parse as UTC
+    const formatted = trimmed.includes(' ') ? trimmed.replace(' ', 'T') : trimmed;
+    const utcFormatted = formatted.endsWith('Z') ? formatted : `${formatted}Z`;
+    const parsedUTC = new Date(utcFormatted);
+    if (!isNaN(parsedUTC.getTime())) {
+      return parsedUTC.getTime();
+    }
+
+    // 3. Fallback: standard Date parse
+    const fallback = new Date(trimmed);
+    if (!isNaN(fallback.getTime())) return fallback.getTime();
+
+    // 4. Fallback: numeric epoch string
     const num = Number(trimmed);
     if (!isNaN(num) && num > 1000000) return num;
   }

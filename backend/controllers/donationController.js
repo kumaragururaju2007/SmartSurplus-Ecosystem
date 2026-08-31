@@ -123,8 +123,8 @@ const createDonation = async (req, res, next) => {
           qtyNum,
           quantity_unit || 'Meals',
           description || '',
-          prepTime,
-          safeUntil,
+          prepTime instanceof Date ? prepTime.toISOString() : (prepTime ? new Date(prepTime).toISOString() : new Date().toISOString()),
+          safeUntil instanceof Date ? safeUntil.toISOString() : (safeUntil ? new Date(safeUntil).toISOString() : new Date().toISOString()),
           pickup_address.trim(),
           latNum,
           lngNum,
@@ -466,7 +466,13 @@ const getDonationById = async (req, res, next) => {
       }
     }
 
-    return res.json({ success: true, donation, match, donor: donorDetails });
+    const serializedDonation = donation ? {
+      ...donation,
+      safe_until: donation.safe_until ? (donation.safe_until instanceof Date ? donation.safe_until.toISOString() : (String(donation.safe_until).endsWith('Z') ? String(donation.safe_until) : `${String(donation.safe_until).replace(' ', 'T')}Z`)) : donation.safe_until,
+      preparation_time: donation.preparation_time ? (donation.preparation_time instanceof Date ? donation.preparation_time.toISOString() : (String(donation.preparation_time).endsWith('Z') ? String(donation.preparation_time) : `${String(donation.preparation_time).replace(' ', 'T')}Z`)) : donation.preparation_time
+    } : null;
+
+    return res.json({ success: true, donation: serializedDonation, match, donor: donorDetails });
   } catch (err) {
     next(err);
   }

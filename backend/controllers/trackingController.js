@@ -112,7 +112,13 @@ const getTrackingDetails = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Donation tracking details not found' });
     }
 
-    return res.json({ success: true, tracking: result });
+    const serializedResult = result ? {
+      ...result,
+      safe_until: result.safe_until ? (result.safe_until instanceof Date ? result.safe_until.toISOString() : (String(result.safe_until).endsWith('Z') ? String(result.safe_until) : `${String(result.safe_until).replace(' ', 'T')}Z`)) : result.safe_until,
+      preparation_time: result.preparation_time ? (result.preparation_time instanceof Date ? result.preparation_time.toISOString() : (String(result.preparation_time).endsWith('Z') ? String(result.preparation_time) : `${String(result.preparation_time).replace(' ', 'T')}Z`)) : result.preparation_time
+    } : null;
+
+    return res.json({ success: true, tracking: serializedResult });
   } catch (err) {
     next(err);
   }
