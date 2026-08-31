@@ -21,8 +21,19 @@ export default function CreateDonation({ token }) {
   const [quantity, setQuantity] = useState('');
   const [quantityUnit, setQuantityUnit] = useState('Meals');
   const [description, setDescription] = useState('');
-  const [prepDate, setPrepDate] = useState(() => new Date().toISOString().split('T')[0]);
-  const [prepTime, setPrepTime] = useState(() => new Date().toTimeString().substring(0, 5));
+  const [prepDate, setPrepDate] = useState(() => {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  });
+  const [prepTime, setPrepTime] = useState(() => {
+    const d = new Date();
+    const h = String(d.getHours()).padStart(2, '0');
+    const min = String(d.getMinutes()).padStart(2, '0');
+    return `${h}:${min}`;
+  });
   const [pickupAddress, setPickupAddress] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
@@ -168,7 +179,11 @@ export default function CreateDonation({ token }) {
     setLoading(true);
 
     try {
-      const preparationTimeStr = `${prepDate}T${prepTime}:00`;
+      const localPrep = new Date(`${prepDate}T${prepTime}:00`);
+      const preparationTimeISO = isNaN(localPrep.getTime()) ? new Date().toISOString() : localPrep.toISOString();
+      const safeUntilDate = new Date((isNaN(localPrep.getTime()) ? Date.now() : localPrep.getTime()) + totalSafeHours * 3600 * 1000);
+      const safeUntilISO = safeUntilDate.toISOString();
+
       const res = await createDonation({
         food_name: foodName.trim(),
         food_category: foodCategory,
@@ -177,7 +192,8 @@ export default function CreateDonation({ token }) {
         weight_kg: weightNum,
         servings: hasCustomQty ? qtyNum : null,
         description: description.trim(),
-        preparation_time: preparationTimeStr,
+        preparation_time: preparationTimeISO,
+        safe_until: safeUntilISO,
         pickup_address: pickupAddress.trim(),
         latitude: latNum,
         longitude: lngNum,

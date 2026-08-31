@@ -10,15 +10,32 @@ const CATEGORY_DEFAULT_HOURS = {
   'Bakery items': 8
 };
 
-function calculateSafeUntil(foodCategory, prepTimeStr, customHours = null) {
+function calculateSafeUntil(foodCategory, prepTimeStr, customHours = null, clientSafeUntil = null) {
   const defaultHours = CATEGORY_DEFAULT_HOURS[foodCategory] || 4;
-  const prepDate = prepTimeStr ? new Date(prepTimeStr) : new Date();
+  let prepDate = new Date();
+  if (prepTimeStr) {
+    const parsed = new Date(prepTimeStr);
+    if (!isNaN(parsed.getTime())) {
+      prepDate = parsed;
+    }
+  }
+
+  // If client passed a timezone-accurate ISO safe_until timestamp, validate and use it
+  if (clientSafeUntil) {
+    const clientDate = new Date(clientSafeUntil);
+    if (!isNaN(clientDate.getTime())) {
+      const maxAllowedMs = prepDate.getTime() + defaultHours * 3600 * 1000 + 120000; // 2 min grace for network transit
+      if (clientDate.getTime() <= maxAllowedMs && clientDate.getTime() > prepDate.getTime()) {
+        return clientDate;
+      }
+    }
+  }
   
   // Rule: Donor can shorten safe collection window, but CANNOT extend beyond safety max
   let effectiveHours = defaultHours;
   if (customHours !== null && customHours !== undefined && !isNaN(customHours)) {
     const hoursNum = parseFloat(customHours);
-    if (hoursNum < defaultHours && hoursNum > 0) {
+    if (hoursNum > 0 && hoursNum <= defaultHours) {
       effectiveHours = hoursNum;
     }
   }
@@ -37,6 +54,7 @@ const createDonation = async (req, res, next) => {
       quantity_unit,
       description,
       preparation_time,
+      safe_until,
       pickup_address,
       latitude,
       longitude,
@@ -76,7 +94,7 @@ const createDonation = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Preparation time must be valid.' });
     }
 
-    const safeUntil = calculateSafeUntil(food_category, prepTime, custom_safe_hours);
+    const safeUntil = calculateSafeUntil(food_category, prepTime, custom_safe_hours, safe_until);
 
     let donorId = null;
     if (db.isConnected) {
