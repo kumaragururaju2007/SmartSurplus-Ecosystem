@@ -272,7 +272,7 @@ const getDonationById = async (req, res, next) => {
             `SELECT d.*, donor.business_name as donor_name, donor.address as donor_address, donor.latitude as donor_lat, donor.longitude as donor_lng 
              FROM donations d 
              LEFT JOIN donors donor ON d.donor_id = donor.id 
-             WHERE d.donor_id = ? ORDER BY d.created_at DESC LIMIT 1`, 
+             WHERE d.donor_id = ? ORDER BY d.id DESC, d.created_at DESC LIMIT 1`, 
             [donorId]
           );
           donation = rows[0];
@@ -281,7 +281,7 @@ const getDonationById = async (req, res, next) => {
             `SELECT d.*, donor.business_name as donor_name, donor.address as donor_address, donor.latitude as donor_lat, donor.longitude as donor_lng 
              FROM donations d 
              LEFT JOIN donors donor ON d.donor_id = donor.id 
-             ORDER BY d.created_at DESC LIMIT 1`
+             ORDER BY d.id DESC, d.created_at DESC LIMIT 1`
           );
           donation = rows[0];
         }

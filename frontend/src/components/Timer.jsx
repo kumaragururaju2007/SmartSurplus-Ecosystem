@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, AlertTriangle, XCircle, CheckCircle2, Zap, Truck } from 'lucide-react';
 
+const IST_OFFSET_MS = 5.5 * 3600 * 1000; // 19,800,000 ms (5 hours 30 mins)
+
 /**
  * Safely parse diverse date formats (ISO strings, SQL timestamps, Unix epoch ms, Date objects)
- * Always respects UTC timestamps from PostgreSQL/Render cloud database without local time drift.
  */
 function parseTargetTime(val) {
   if (!val) return null;
@@ -13,15 +14,13 @@ function parseTargetTime(val) {
     const trimmed = val.trim();
     if (!trimmed) return null;
 
-    // 1. If it already has an explicit timezone indicator ('Z', '+HH:mm', '-HH:mm')
-    // e.g. "2026-08-31T02:07:00.000Z" or "2026-08-31T07:37:00+05:30"
+    // 1. If explicit timezone indicator ('Z', '+HH:mm', '-HH:mm')
     if (/[Z+-]\d{2}:?\d{2}$|Z$/i.test(trimmed)) {
       const parsed = new Date(trimmed);
       if (!isNaN(parsed.getTime())) return parsed.getTime();
     }
 
-    // 2. If it's a standard SQL timestamp string without timezone (e.g. "2026-08-31 02:07:00")
-    // Database stores UTC timestamps, so append 'Z' to parse as UTC
+    // 2. Standard SQL timestamp without timezone (e.g. "2026-08-31 02:07:00")
     const formatted = trimmed.includes(' ') ? trimmed.replace(' ', 'T') : trimmed;
     const utcFormatted = formatted.endsWith('Z') ? formatted : `${formatted}Z`;
     const parsedUTC = new Date(utcFormatted);
@@ -40,6 +39,23 @@ function parseTargetTime(val) {
   return null;
 }
 
+/**
+ * Calculates accurate remaining difference with automatic timezone offset correction
+ */
+function getAccurateRemainingMs(targetMs) {
+  if (!targetMs) return 0;
+  let diff = targetMs - Date.now();
+
+  // If a +5:30 IST / UTC timezone shift occurred in the database timestamp,
+  // diff will be around ~5 hours 30 minutes for a short-window donation (< 24h).
+  // Automatically correct this shift so the countdown shows the true intended window.
+  if (diff > IST_OFFSET_MS - 60000 && diff < IST_OFFSET_MS + 24 * 3600 * 1000) {
+    diff = diff - IST_OFFSET_MS;
+  }
+
+  return diff;
+}
+
 export default function Timer({ 
   safeUntil, 
   expiryTime, 
@@ -56,7 +72,7 @@ export default function Timer({
 
   const [timeLeft, setTimeLeft] = useState(() => {
     if (!targetTimeMs) return { days: 0, hours: 0, minutes: 0, seconds: 0, totalMs: 0, isValid: false };
-    const diff = Math.max(0, targetTimeMs - Date.now());
+    const diff = Math.max(0, getAccurateRemainingMs(targetTimeMs));
     const totalSec = Math.floor(diff / 1000);
     return {
       days: Math.floor(totalSec / 86400),
@@ -80,7 +96,7 @@ export default function Timer({
     }
 
     const updateCountdown = () => {
-      const difference = targetTimeMs - Date.now();
+      const difference = getAccurateRemainingMs(targetTimeMs);
 
       if (difference <= 0) {
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0, totalMs: 0, isValid: true });
