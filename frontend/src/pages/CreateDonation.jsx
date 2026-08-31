@@ -478,10 +478,11 @@ export default function CreateDonation({ token }) {
               <button 
                 type="button" 
                 onClick={handleGetCurrentLocation} 
+                disabled={locating}
                 className="btn-secondary" 
-                style={{ padding: '0.3rem 0.75rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem', background: 'white' }}
+                style={{ padding: '0.3rem 0.75rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem', background: 'white', opacity: locating ? 0.7 : 1, cursor: locating ? 'not-allowed' : 'pointer' }}
               >
-                <Compass size={14} /> Use My Current Location
+                <Compass size={14} className={locating ? 'spin' : ''} /> {locating ? 'Detecting Location...' : 'Use My Current Location'}
               </button>
             </div>
 

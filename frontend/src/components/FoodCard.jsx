@@ -44,7 +44,7 @@ export default function FoodCard({ donation, onViewDetails, onAction, actionText
       </div>
 
       <div style={{ marginTop: '0.2rem' }}>
-        <Timer expiryTime={donation.safe_expiry_time} />
+        <Timer safeUntil={donation.safe_until || donation.safe_expiry_time || donation.expires_at} status={donation.status} />
       </div>
 
       <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>

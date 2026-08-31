@@ -10,6 +10,7 @@ import Timer from '../components/Timer';
 import VerifiedDonorBadge from '../components/VerifiedDonorBadge';
 import { getDonationById, updateDonationStatus } from '../services/donationAPI';
 import { getTripLive } from '../services/fleetAPI';
+import { detectCurrentLocation } from '../services/locationService';
 import '../styles/tracking.css';
 
 export default function Tracking({ token, user }) {
@@ -18,6 +19,7 @@ export default function Tracking({ token, user }) {
   const [match, setMatch] = useState(null);
   const [liveTrip, setLiveTrip] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [locating, setLocating] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [actionMsg, setActionMsg] = useState('');
   const [actionError, setActionError] = useState('');
@@ -110,22 +112,19 @@ export default function Tracking({ token, user }) {
     return () => socket.disconnect();
   }, [id, token, liveTrip?.id]);
 
-  const handleGetCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          });
-          setLocationError('');
-        },
-        (err) => {
-          setLocationError('Location permission denied. Using pickup coordinates.');
-        }
-      );
-    } else {
-      setLocationError('Geolocation is not supported by your browser.');
+  const handleGetCurrentLocation = async () => {
+    setLocating(true);
+    setLocationError('');
+    try {
+      const loc = await detectCurrentLocation();
+      setUserLocation({
+        lat: loc.lat,
+        lng: loc.lng
+      });
+    } catch (err) {
+      setLocationError(err.message || 'Could not detect location. Please check browser permissions.');
+    } finally {
+      setLocating(false);
     }
   };
 
@@ -510,10 +509,11 @@ export default function Tracking({ token, user }) {
             </h3>
             <button 
               onClick={handleGetCurrentLocation} 
+              disabled={locating}
               className="btn-secondary" 
-              style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem', background: 'white' }}
+              style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem', background: 'white', opacity: locating ? 0.7 : 1, cursor: locating ? 'not-allowed' : 'pointer' }}
             >
-              <Compass size={14} /> Use Current Location
+              <Compass size={14} className={locating ? 'spin' : ''} /> {locating ? 'Detecting...' : 'Use Current Location'}
             </button>
           </div>
 

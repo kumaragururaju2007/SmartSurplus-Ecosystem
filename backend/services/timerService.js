@@ -190,9 +190,24 @@ async function handleExpiredDonation(donation, io = null) {
       io.to(`donation_${donation.id}`).emit('biogasRedirected', { donationId: donation.id, plantName: plant.plant_name });
     }
     if (typeof io.emit === 'function') {
+      io.emit('donation_status_updated', { donationId: donation.id, status: 'REDIRECTED_TO_BIOGAS' });
       io.emit('biogas_dashboard_update', { donationId: donation.id, plantId: plant.id });
     }
   }
+}
+
+function parseSafeUntilMs(safeUntil) {
+  if (!safeUntil) return null;
+  if (safeUntil instanceof Date) return isNaN(safeUntil.getTime()) ? null : safeUntil.getTime();
+  if (typeof safeUntil === 'number') return isNaN(safeUntil) ? null : safeUntil;
+  if (typeof safeUntil === 'string') {
+    const trimmed = safeUntil.trim();
+    if (!trimmed) return null;
+    const formatted = trimmed.includes(' ') && !trimmed.includes('T') ? trimmed.replace(' ', 'T') : trimmed;
+    const ms = new Date(formatted).getTime();
+    if (!isNaN(ms)) return ms;
+  }
+  return null;
 }
 
 /**
@@ -216,17 +231,17 @@ async function checkTimer(io = null) {
     const now = Date.now();
 
     for (const donation of activeDonations) {
-      const isPastSafeUntil = donation.safe_until && new Date(donation.safe_until).getTime() <= now;
+      const safeUntilMs = parseSafeUntilMs(donation.safe_until);
+      const isPastSafeUntil = safeUntilMs !== null && safeUntilMs <= now;
       const isExpiredStatus = donation.status === 'EXPIRED';
 
       if (isPastSafeUntil || isExpiredStatus) {
         await handleExpiredDonation(donation, io);
-      } else if (donation.safe_until) {
-        const safeUntilMs = new Date(donation.safe_until).getTime();
+      } else if (safeUntilMs !== null) {
         const remainingMs = safeUntilMs - now;
         if (remainingMs > 0 && remainingMs < 30 * 60 * 1000 && !warnedDonations.has(donation.id)) {
           warnedDonations.add(donation.id);
-          const minsLeft = Math.round(remainingMs / 60000);
+          const minsLeft = Math.max(1, Math.round(remainingMs / 60000));
           console.log(`⚠️ Timer Warning: Donation #${donation.id} has ${minsLeft} mins remaining.`);
           await notificationService.createNotification({
             userId: donation.donor_id,

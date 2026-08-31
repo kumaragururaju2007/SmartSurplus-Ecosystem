@@ -8,6 +8,7 @@ import {
 import { io } from 'socket.io-client';
 import Map from '../components/Map';
 import VerifiedDonorBadge from '../components/VerifiedDonorBadge';
+import { detectCurrentLocation } from '../services/locationService';
 import '../styles/map.css';
 import '../styles/tracking.css';
 
@@ -220,27 +221,19 @@ export default function FullscreenTrackingMap({ user }) {
     }
   };
 
-  const handleLocateMe = () => {
-    if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser.');
-      return;
-    }
+  const handleLocateMe = async () => {
     setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
-        setUserLocation({ lat: latitude, lng: longitude });
-        setMapCenter([latitude, longitude]);
-        setMapZoom(15);
-        setLocating(false);
-      },
-      (err) => {
-        console.warn('Geolocation error:', err.message);
-        alert('Could not obtain your current GPS coordinates.');
-        setLocating(false);
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
+    try {
+      const loc = await detectCurrentLocation();
+      setUserLocation({ lat: loc.lat, lng: loc.lng });
+      setMapCenter([loc.lat, loc.lng]);
+      setMapZoom(15);
+    } catch (err) {
+      console.warn('Geolocation error:', err.message);
+      alert(err.message || 'Could not obtain your current location.');
+    } finally {
+      setLocating(false);
+    }
   };
 
   const counts = useMemo(() => {
