@@ -206,7 +206,7 @@ export default function NGODashboard({ user, token }) {
         <div className="stat-card">
           <div className="stat-icon-wrapper" style={{ background: '#e0f2fe', color: '#0284c7' }}><Utensils size={24} /></div>
           <div>
-            <div className="stat-value">{loading ? '...' : `${stats.totalFoodReceivedKg || stats.foodItemsDistributed || 0} kg`}</div>
+            <div className="stat-value">{loading ? '...' : `${Number(stats.totalFoodReceivedKg || stats.foodItemsDistributed || 0).toFixed(2)} kg`}</div>
             <div className="stat-label">Food Received</div>
             <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '2px' }}>Verified total weight received</div>
           </div>

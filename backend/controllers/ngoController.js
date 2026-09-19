@@ -1243,11 +1243,12 @@ const getNGOImpact = async (req, res, next) => {
       totalBeneficiariesServed += people;
     });
 
+    totalFoodDistributedKg = parseFloat(totalFoodDistributedKg.toFixed(2));
     const totalDonationsReceived = completedDonations.length;
     const successfulDistributions = distributionsList.length > 0 ? distributionsList.length : totalDonationsReceived;
-    const wastePreventedKg = parseFloat(totalFoodDistributedKg.toFixed(1));
+    const wastePreventedKg = parseFloat(totalFoodDistributedKg.toFixed(2));
     const totalMatchesCompleted = completedDonations.length;
-    const co2SavedKg = parseFloat((totalFoodDistributedKg * 2.1).toFixed(1));
+    const co2SavedKg = parseFloat((totalFoodDistributedKg * 2.1).toFixed(2));
 
     // 100% REAL Monthly Breakdown based on actual distribution/donation dates in database
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -1288,7 +1289,7 @@ const getNGOImpact = async (req, res, next) => {
         month: monthNames[targetMonth],
         year: targetYear,
         beneficiaries: monthBeneficiaries,
-        wastePreventedKg: parseFloat(monthWasteKg.toFixed(1))
+        wastePreventedKg: parseFloat(monthWasteKg.toFixed(2))
       });
     }
 

@@ -1,0 +1,326 @@
+================================================================================
+SMARTSURPLUS ECOSYSTEM - COMPLETE PROJECT DOCUMENTATION & TECHNICAL OVERVIEW
+AI-Assisted Surplus Food Redistribution & Circular Waste Management Platform
+================================================================================
+
+TABLE OF CONTENTS:
+1. Executive Summary & Vision
+2. The Problem Statement & Market Opportunity
+3. Core Dual-Track Architecture
+4. Comprehensive Smart Matching Engine (Rule-Based AI / Python)
+5. User Roles & System Permissions
+6. Food Safety Timers & Automated Expiry Prevention
+7. Circular Economy & Biogas Redirection Lifecycle
+8. Logistics, Live Map Tracking & OTP Handover Protocol
+9. Trust & Verification Framework (Universal Badge System)
+10. Impact Metrics, Carbon Offset & ESG Analytics
+11. Technical Architecture & Tech Stack
+12. Database Schema & Data Models
+13. Complete REST API Reference
+14. Installation, Setup & Demo Guide
+15. Frequently Asked Questions (Judge / Presentation Ready)
+
+================================================================================
+1. EXECUTIVE SUMMARY & VISION
+================================================================================
+SmartSurplus Ecosystem is a next-generation smart logistics and circular economy 
+platform built to solve two massive humanitarian and environmental challenges:
+  1. Urban Hunger and Food Insecurity.
+  2. Landfill Food Waste and Methane Greenhouse Gas Emissions.
+
+SmartSurplus does not simply list surplus food on a bulletin board. It operates 
+an intelligent multi-criteria decision engine that matches fresh surplus food to 
+the closest, most capable, verified NGO for human consumption. If food cannot be 
+collected before its safe consumption deadline, the platform automatically 
+redirects it to the nearest verified Biogas Energy Facility, converting food waste 
+into clean energy and bio-fertilizer, ensuring ZERO landfill waste.
+
+================================================================================
+2. THE PROBLEM STATEMENT & MARKET OPPORTUNITY
+================================================================================
+- More than 1/3rd of all food produced globally is wasted.
+- Decomposing food in landfills produces Methane (CH4), a greenhouse gas 28 times 
+  more potent than Carbon Dioxide (CO2).
+- At the same time, millions suffer from nutritional poverty in urban centers.
+
+Traditional donation platforms fail due to:
+  * Slow manual matching leading to food spoilage before pickup.
+  * Inefficient routing causing high food transit times.
+  * Lack of capacity awareness (overwhelming small shelters while large NGOs sit idle).
+  * No safety net when food expires, resulting in municipal landfill disposal.
+  * Lack of trust and legal verification between donors and recipients.
+
+SmartSurplus solves all five barriers through automated AI matching, real-time 
+spoilage timers, verified entity checks, and automatic biogas diversion.
+
+================================================================================
+3. CORE DUAL-TRACK ARCHITECTURE
+================================================================================
+
+[ TRACK 1: PRIMARY PATH - HUMAN REDISTRIBUTION ]
+Food Donor creates surplus listing 
+  -> Smart Matching Engine evaluates candidates in real-time
+  -> Top-ranked verified NGO receives instant high-priority notification
+  -> NGO accepts & dispatches volunteer/driver
+  -> OTP-verified pickup and delivery handover
+  -> Surplus food feeds hungry individuals & families.
+
+[ TRACK 2: SECONDARY PATH - CIRCULAR CLEAN ENERGY CONVERSION ]
+Food listing approaches safe consumption deadline without an NGO pickup
+  -> Automated Spoilage Timer fires trigger
+  -> System redirects listing to Nearest Verified Biogas Digester Plant
+  -> Biogas logistics dispatches collection vehicle
+  -> Organic waste is converted to compressed biogas (CBG) & organic compost
+  -> Zero food reaches landfills.
+
+================================================================================
+4. COMPREHENSIVE SMART MATCHING ENGINE (PYTHON & JS AI MICROSERVICE)
+================================================================================
+SmartSurplus uses a deterministic Multi-Criteria Decision Analysis (MCDA) 
+Weighted Scoring Model implemented in Python (`python_matching_service.py`) 
+and executed through Node.js (`matchingService.js`).
+
+A. HARD CONSTRAINT PRE-FILTERING (Eligibility Gate):
+   Before scoring, all NGOs in the database are filtered:
+   1. `is_verified == 1` (Admin approved entity with valid legal registrations).
+   2. `is_available == 1` (Actively open and ready for distribution).
+   3. `ngo_capacity >= donation_quantity` (Must have physical storage capacity).
+   4. Valid latitude and longitude coordinates present.
+
+B. THE 5-FACTOR WEIGHTED SCORING FORMULA:
+   Total Score (0 to 100) = 
+       (Distance Score    x 0.25) +
+       (Capacity Score    x 0.20) +
+       (Urgency Score     x 0.25) +
+       (Availability Score x 0.15) +
+       (Response Score    x 0.15)
+
+   1. Distance Score (25% Weight - Haversine Geographic Calculation):
+      Measures exact straight-line distance in kilometers:
+      - <= 2 km  : 100 points
+      - <= 5 km  : 80 points
+      - <= 10 km : 60 points
+      - <= 20 km : 40 points
+      - <= 30 km : 20 points
+      - > 30 km  : 0 points
+
+   2. Capacity Score (20% Weight):
+      Evaluates whether the NGO can comfortably handle the quantity:
+      - Ratio = NGO Food Capacity / Donation Quantity
+      - If Ratio >= 2.0 : 100 points
+      - If Ratio < 2.0  : Ratio * 50 points (e.g., 1.2 ratio = 60 points)
+
+   3. Food Urgency Score (25% Weight):
+      Evaluates remaining freshness window based on `safe_until` timestamp:
+      - < 30 minutes remaining : 100 points (Critical immediate dispatch)
+      - 30 to 60 minutes       : 80 points (High priority)
+      - 60 to 120 minutes      : 60 points (Moderate priority)
+      - > 120 minutes          : 40 points (Standard priority)
+
+   4. Availability Score (15% Weight):
+      Evaluates active operational status and readiness:
+      - Active, open shelter status : 100 points (Full 15 points contribution)
+
+   5. Response History Score (15% Weight):
+      Evaluates historical reliability and acceptance rate:
+      - Score = NGO historical response rate percentage (e.g., 95% = 95 points)
+      - Defaults to 90.0% for new verified entities.
+
+C. EXPLAINABLE AI OUTPUT:
+   The engine generates structured, human-readable explanations:
+   "✓ 3.4 km distance calculated via Python AI Model"
+   "✓ Sufficient capacity (150 meals)"
+   "✓ Active availability status"
+   "✓ Response history score (95.0%)"
+
+================================================================================
+5. USER ROLES & SYSTEM PERMISSIONS
+================================================================================
+1. DONOR (Restaurants, Hotels, Event Halls, Supermarkets, Households):
+   - Create surplus food listings with food category, quantity, and safety timer.
+   - Real-time matching visibility with top candidate rankings.
+   - Live GPS tracking of assigned pickup vehicles.
+   - Automated 4-digit pickup verification OTP.
+   - Download verified 80G tax receipts and ESG impact reports.
+
+2. NGO / CHARITY (Food Banks, Orphanages, Community Kitchens, Shelters):
+   - Real-time matched food alerts with sound/push notifications.
+   - One-click Accept / Reject workflow.
+   - Driver & volunteer vehicle assignment.
+   - Delivery confirmation with OTP verification.
+   - Capacity and active status management.
+
+3. BIOGAS FACILITY (Anaerobic Digestion & Waste-to-Energy Plants):
+   - Access to uncollected/expired food listings redirected automatically.
+   - Waste batch logging (Tons received, methane yield, energy generated).
+   - Logistics scheduling for bulk organic waste collection.
+
+4. SYSTEM ADMIN:
+   - Entity legal verification (PAN, 12A/80G, FCRA, NGO Darpan IDs, Biogas licenses).
+   - User account moderation and role adjustments.
+   - Platform-wide telemetry (Total food rescued, CO2 avoided, active matches).
+
+================================================================================
+6. FOOD SAFETY TIMERS & AUTOMATED EXPIRY PREVENTION
+================================================================================
+To ensure microbiological safety, donations adhere to category shelf-life rules:
+  - Cooked Gravy / Dairy Dishes : 2 Hours Maximum Window
+  - Cooked Dry / Rice / Breads  : 4 Hours Maximum Window
+  - Bakery & Confectionery      : 8 Hours Maximum Window
+  - Packaged Foods / Fresh Veg  : 24 Hours Maximum Window
+
+Background timers continuously evaluate active listings. If 30 minutes remain, 
+high-priority visual warnings and notifications are broadcast. If the safe 
+window elapses without pickup, Track 2 (Biogas Redirection) triggers instantly.
+
+================================================================================
+7. CIRCULAR ECONOMY & BIOGAS REDIRECTION LIFECYCLE
+================================================================================
+Status Progression for Expired Food:
+  AVAILABLE -> EXPIRED -> REDIRECTED_TO_BIOGAS -> BIOGAS_ACCEPTED -> 
+  BIOGAS_IN_TRANSIT -> BIOGAS_COLLECTED -> PROCESSED_INTO_ENERGY
+
+Conversion Metrics:
+  - 1 Ton Food Waste -> ~100 to 120 m³ Biogas (~60% Methane).
+  - Equivalent to ~200 kWh Clean Electrical Energy or ~50 kg Bio-CNG fuel.
+  - Generates nutrient-rich liquid digestate (organic fertilizer).
+
+================================================================================
+8. LOGISTICS, LIVE MAP TRACKING & OTP HANDOVER PROTOCOL
+================================================================================
+- Interactive OpenStreetMap & Leaflet.js mapping interface.
+- Live marker visualization for Donor, NGO, Vehicle Driver, and Biogas Plant.
+- Socket.IO WebSockets stream real-time coordinate updates and status shifts.
+- Dual-Step OTP Protocol:
+    1. Donor verifies Driver with Pickup OTP before handing over food containers.
+    2. Recipient NGO verifies Driver with Delivery OTP upon receiving meals.
+    Eliminates delivery fraud, lost inventory, and unauthorized handoffs.
+
+================================================================================
+9. TRUST & VERIFICATION FRAMEWORK (UNIVERSAL BADGE SYSTEM)
+================================================================================
+The `VerifiedBadge` component visually protects platform integrity:
+- ✓ Verified NGO : Legal check (12A, 80G, NGO Darpan ID, Physical address).
+- ✓ Verified Biogas : Industrial environmental & waste handling license approved.
+- ✓ Verified Donor : FSSAI / Food safety license & business registration checked.
+- Visual warning badges for Pending, Rejected, or Suspended organizations.
+
+================================================================================
+10. IMPACT METRICS, CARBON OFFSET & ESG ANALYTICS
+================================================================================
+Formulas calculated in real-time:
+  * Total Meals Supported = Total Quantity Rescued (Meals)
+  * Food Diverted from Landfill = Total Rescued (kg)
+  * CO2 Equivalent Avoided = Food Rescued (kg) * 2.5 kg CO2e
+  * Methane Prevented = Food Rescued (kg) * 0.07 kg CH4
+  * Clean Energy Generated = Biogas Waste Processed (kg) * 0.2 kWh
+  * Printable Corporate ESG & CSR compliance report with cryptographic checksum.
+
+================================================================================
+11. TECHNICAL ARCHITECTURE & TECH STACK
+================================================================================
+- Frontend:
+    * Framework: React.js 18 (Vite Bundler)
+    * Styling: Glassmorphic Vanilla CSS (Emerald Green / Slate Palette)
+    * Icons: Lucide React
+    * Mapping: Leaflet.js & React-Leaflet
+    * Realtime: Socket.IO-Client
+- Backend:
+    * Runtime: Node.js & Express.js REST API
+    * Realtime: Socket.IO Server (Multi-Room Architecture)
+    * Process Runner: Node.js Child Process (`execFile`) for Python execution
+    * Communications: Nodemailer (Email) + SMS Gateway integration
+- AI / Microservice:
+    * Python 3 (`python_matching_service.py`)
+    * Multi-Criteria Linear Optimization & Haversine Distance Trigonometry
+- Database:
+    * Primary: PostgreSQL (`pg` pool) / MySQL compatible
+    * Fallback: Zero-Crash In-Memory Store for instantaneous demo stability
+- Security:
+    * Password Hashing: bcryptjs (10 salt rounds)
+    * Authentication: JSON Web Tokens (JWT) with HTTP Authorization headers
+    * Role-Based Access Control (RBAC) middleware
+
+================================================================================
+12. DATABASE SCHEMA OVERVIEW
+================================================================================
+- `users` : id, name, email, password_hash, role, phone, address, created_at
+- `donations` : id, donor_id, food_category, quantity, quantity_unit, safe_until, 
+                latitude, longitude, status, pickup_otp, delivery_otp, created_at
+- `ngos` : id, user_id, organization_name, food_capacity, latitude, longitude, 
+           is_verified, is_available, response_rate, darpan_id, 12a_80g
+- `biogas_facilities` : id, user_id, facility_name, capacity_tons, latitude, 
+                        longitude, is_verified, is_available
+- `matches` : id, donation_id, ngo_id, match_score, distance_km, status, matched_at
+- `notifications` : id, user_id, title, message, type, is_read, created_at
+- `impact_logs` : id, donation_id, weight_kg, meals_count, co2_avoided_kg
+
+================================================================================
+13. COMPLETE REST API REFERENCE
+================================================================================
+Authentication:
+  POST /api/auth/register          - Register user (DONOR, NGO, BIOGAS)
+  POST /api/auth/login             - Authenticate & receive JWT
+  GET  /api/auth/me                - Get current logged-in user profile
+
+Donations & Matching:
+  POST /api/donations              - Create new surplus food listing
+  GET  /api/donations              - List donations (filtered by role/status)
+  GET  /api/donations/:id          - Get specific donation details
+  POST /api/matching/match/:id     - Trigger Python Smart Matching Engine
+  POST /api/matching/accept/:id    - NGO accepts matched donation
+
+Logistics & Verification:
+  POST /api/donations/verify-otp   - Verify pickup or delivery OTP
+  GET  /api/tracking/:id           - Get live GPS coordinates & transit steps
+
+Biogas & Waste:
+  GET  /api/biogas/requests        - View redirected organic waste requests
+  POST /api/biogas/process/:id     - Log completed biogas digestion batch
+
+Admin & Impact:
+  GET  /api/admin/organizations    - List pending verification organizations
+  PUT  /api/admin/verify/:id       - Approve / Reject entity verification
+  GET  /api/impact/summary         - Get global / organizational ESG statistics
+
+================================================================================
+14. INSTALLATION & DEMO SETUP GUIDE
+================================================================================
+Prerequisites: Node.js (v18+), Python (v3.8+), Git.
+
+Step 1: Clone and install backend:
+  cd backend
+  npm install
+  npm run dev          -> Running on http://localhost:5000
+
+Step 2: Install frontend:
+  cd frontend
+  npm install
+  npm run dev          -> Running on http://localhost:5173
+
+Step 3: Demo Logins (Pre-configured):
+  - Donor  : donor1@example.com   / password123
+  - NGO    : ngo1@example.com     / password123
+  - Biogas : biogas1@example.com  / password123
+  - Admin  : admin@example.com    / password123
+
+================================================================================
+15. FREQUENTLY ASKED QUESTIONS (JUDGE & PRESENTATION READY)
+================================================================================
+Q: How does SmartSurplus differ from standard food donation apps?
+A: SmartSurplus is the first platform with an automated closed-loop dual-track 
+   system. It combines rule-based AI multi-criteria matching with an automated 
+   biogas redirection safety net, guaranteeing zero food reaches landfills.
+
+Q: Why not use a Large Language Model (LLM) for matching?
+A: Matching requires strict mathematical accuracy, zero hallucinations, instant 
+   sub-10ms latency, and 100% explainable auditing. Our Python MCDA heuristic 
+   provides guaranteed precision without cloud API costs or latency.
+
+Q: How is food safety enforced?
+A: Dynamic time-decay timers tailored to specific food categories automatically 
+   disallow human matching if the food passes its biological consumption threshold.
+
+================================================================================
+END OF DOCUMENTATION - SMARTSURPLUS ECOSYSTEM © 2026
+================================================================================

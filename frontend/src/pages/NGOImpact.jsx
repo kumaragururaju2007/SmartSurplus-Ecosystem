@@ -59,7 +59,7 @@ export default function NGOImpact({ token }) {
         <div className="stat-card">
           <div className="stat-icon-wrapper" style={{ background: '#f0fdf4', color: '#16a34a' }}><Utensils size={24} /></div>
           <div>
-            <div className="stat-value">{loading ? '...' : `${impact.totalFoodDistributedKg} kg`}</div>
+            <div className="stat-value">{loading ? '...' : `${Number(impact.totalFoodDistributedKg || 0).toFixed(2)} kg`}</div>
             <div className="stat-label">Food Distributed</div>
           </div>
         </div>
@@ -83,7 +83,7 @@ export default function NGOImpact({ token }) {
         <div className="stat-card">
           <div className="stat-icon-wrapper" style={{ background: '#fff7ed', color: '#c2410c' }}><Leaf size={24} /></div>
           <div>
-            <div className="stat-value">{loading ? '...' : `${impact.wastePreventedKg} kg`}</div>
+            <div className="stat-value">{loading ? '...' : `${Number(impact.wastePreventedKg || 0).toFixed(2)} kg`}</div>
             <div className="stat-label">Waste Prevented</div>
           </div>
         </div>
@@ -106,17 +106,17 @@ export default function NGOImpact({ token }) {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem', textAlign: 'center' }}>
           <div style={{ background: 'rgba(255,255,255,0.15)', padding: '1.25rem', borderRadius: '14px' }}>
-            <div style={{ fontSize: '1.8rem', fontWeight: '900' }}>🍱 {impact.totalFoodDistributedKg} kg</div>
+            <div style={{ fontSize: '1.8rem', fontWeight: '900' }}>🍱 {Number(impact.totalFoodDistributedKg || 0).toFixed(2)} kg</div>
             <div style={{ fontSize: '0.85rem', color: '#dcfce7', marginTop: '0.2rem', fontWeight: '700' }}>Food Rescued & Served</div>
           </div>
 
           <div style={{ background: 'rgba(255,255,255,0.15)', padding: '1.25rem', borderRadius: '14px' }}>
-            <div style={{ fontSize: '1.8rem', fontWeight: '900' }}>♻️ {impact.wastePreventedKg} kg</div>
+            <div style={{ fontSize: '1.8rem', fontWeight: '900' }}>♻️ {Number(impact.wastePreventedKg || 0).toFixed(2)} kg</div>
             <div style={{ fontSize: '0.85rem', color: '#dcfce7', marginTop: '0.2rem', fontWeight: '700' }}>Landfill Waste Prevented</div>
           </div>
 
           <div style={{ background: 'rgba(255,255,255,0.15)', padding: '1.25rem', borderRadius: '14px' }}>
-            <div style={{ fontSize: '1.8rem', fontWeight: '900' }}>🌱 {impact.co2SavedKg} kg</div>
+            <div style={{ fontSize: '1.8rem', fontWeight: '900' }}>🌱 {Number(impact.co2SavedKg || 0).toFixed(2)} kg</div>
             <div style={{ fontSize: '0.85rem', color: '#dcfce7', marginTop: '0.2rem', fontWeight: '700' }}>CO₂ Emissions Avoided</div>
           </div>
         </div>
