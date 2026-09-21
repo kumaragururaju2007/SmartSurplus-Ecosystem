@@ -121,7 +121,7 @@ exports.createTrip = async (req, res, next) => {
       return res.status(403).json({ success: false, message: 'Only authorized NGOs, Biogas Facilities, and Admins can create trips' });
     }
 
-    const { donationId, vehicleId, driverId, trackingMethod = 'DRIVER_MOBILE_GPS' } = req.body;
+    const { donationId, vehicleId, driverId, trackingMethod = 'DRIVER_MOBILE_GPS', deviceId } = req.body;
     if (!donationId || !vehicleId || !driverId) {
       return res.status(400).json({ success: false, message: 'Donation ID, Vehicle ID, and Driver ID are mandatory' });
     }
@@ -129,6 +129,7 @@ exports.createTrip = async (req, res, next) => {
     const dId = Number(donationId);
     const vId = Number(vehicleId);
     const drId = Number(driverId);
+    const iotDeviceId = deviceId ? String(deviceId).trim() : `TRUCK${vId.toString().padStart(3, '0')}`;
 
     let handlerInfo = await resolveHandlerForUser(user);
     const handlerType = user.role === 'BIOGAS' ? 'BIOGAS' : 'NGO';
@@ -179,6 +180,16 @@ exports.createTrip = async (req, res, next) => {
         ]
       );
 
+      // Register or update GPS IoT device association
+      if (trackingMethod === 'VEHICLE_IOT_GPS' || deviceId) {
+        const [existGps] = await db.query('SELECT id FROM gps_devices WHERE device_id = ?', [iotDeviceId]);
+        if (existGps.length) {
+          await db.query('UPDATE gps_devices SET vehicle_id = ?, status = "ACTIVE" WHERE device_id = ?', [vId, iotDeviceId]);
+        } else {
+          await db.query('INSERT INTO gps_devices (device_id, vehicle_id, status, device_name) VALUES (?, ?, "ACTIVE", ?)', [iotDeviceId, vId, `IoT Tracker ${iotDeviceId}`]);
+        }
+      }
+
       // Update vehicle & driver status to ASSIGNED
       await db.query("UPDATE vehicles SET status = 'ASSIGNED' WHERE id = ?", [vId]);
       await db.query("UPDATE drivers SET status = 'ASSIGNED', vehicle_id = ? WHERE id = ?", [vId, drId]);
@@ -200,7 +211,7 @@ exports.createTrip = async (req, res, next) => {
 
       // Emit socket notification
       if (req.app.get('io')) {
-        req.app.get('io').emit('trip_assigned', { tripId: insertRes.insertId, donationId: dId, tripCode, handlerType, pairingCode });
+        req.app.get('io').emit('trip_assigned', { tripId: insertRes.insertId, donationId: dId, tripCode, handlerType, pairingCode, trackingMethod, deviceId: iotDeviceId });
       }
 
       return res.status(201).json({
@@ -210,6 +221,8 @@ exports.createTrip = async (req, res, next) => {
         tripCode,
         pairingCode,
         expiresAt,
+        trackingMethod,
+        deviceId: iotDeviceId,
         driverName: driverInfo?.driver_name || driverInfo?.name || 'Assigned Driver',
         vehicleNumber: vehicleInfo?.vehicle_number || vehicleInfo?.license_plate || 'Assigned Vehicle'
       });
@@ -974,6 +987,34 @@ exports.getTripLiveTracking = async (req, res, next) => {
       }
     }
 
+    // Retrieve associated IoT GPS hardware device
+    let iotDevice = null;
+    if (db.isConnected) {
+      const [gpsRows] = await db.query('SELECT * FROM gps_devices WHERE vehicle_id = ? LIMIT 1', [trip.vehicle_id]);
+      if (gpsRows.length > 0) {
+        iotDevice = {
+          device_id: gpsRows[0].device_id,
+          device_name: gpsRows[0].device_name,
+          device_model: gpsRows[0].device_model || 'ESP32_SIM800L_4G',
+          battery_level: gpsRows[0].battery_level,
+          status: gpsRows[0].status,
+          last_ping: gpsRows[0].last_ping
+        };
+      }
+    } else {
+      const dev = (db.memoryStore.gps_devices || []).find(g => Number(g.vehicle_id) === Number(trip.vehicle_id));
+      if (dev) {
+        iotDevice = {
+          device_id: dev.device_id,
+          device_name: dev.device_name,
+          device_model: 'ESP32_SIM800L_4G',
+          battery_level: dev.battery_level,
+          status: dev.status,
+          last_ping: dev.last_ping
+        };
+      }
+    }
+
     return res.json({
       success: true,
       trip: {
@@ -986,6 +1027,7 @@ exports.getTripLiveTracking = async (req, res, next) => {
         pairingCode: activePairingCode,
         tracking_status: trackingStatus,
         tracking_method: trip.tracking_method || 'DRIVER_MOBILE_GPS',
+        iot_device: iotDevice,
         started_at: trip.started_at,
         completed_at: trip.completed_at,
         current_location: trip.current_lat && trip.current_lng ? {

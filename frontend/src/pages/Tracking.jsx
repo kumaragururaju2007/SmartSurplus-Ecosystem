@@ -259,23 +259,35 @@ export default function Tracking({ token, user }) {
               <div style={{ fontWeight: '800', color: liveTrip.tracking_method === 'VEHICLE_IOT_GPS' ? '#b45309' : '#1e40af', marginTop: '0.2rem' }}>
                 {liveTrip.tracking_method === 'VEHICLE_IOT_GPS' ? '⚡ Vehicle IoT Device' : '📱 Driver Mobile GPS'}
               </div>
+              {liveTrip.tracking_method === 'VEHICLE_IOT_GPS' && (
+                <div style={{ fontSize: '0.78rem', color: '#b45309', fontWeight: '700', marginTop: '0.2rem' }}>
+                  ID: {liveTrip.iot_device?.device_id || liveTrip.deviceId || 'TRUCK001'} {liveTrip.iot_device?.battery_level ? `• 🔋 ${liveTrip.iot_device.battery_level}%` : ''}
+                </div>
+              )}
             </div>
 
             <div>
-              <span style={{ color: '#64748b', display: 'block', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>GPS Telemetry</span>
+              <span style={{ color: '#64748b', display: 'block', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase' }}>GPS Telemetry & Speed</span>
               {vehicleLat && vehicleLng ? (
                 liveTrip.is_gps_offline ? (
-                  <span style={{ color: '#dc2626', fontWeight: '800', display: 'inline-block', marginTop: '0.2rem' }}>
-                    ⚠️ GPS Signal Lost ({liveTrip.minutes_since_update}m ago)
-                  </span>
+                  <div>
+                    <span style={{ color: '#dc2626', fontWeight: '800', display: 'inline-block', marginTop: '0.2rem' }}>
+                      ⚠️ GPS Signal Lost ({liveTrip.minutes_since_update || 1}m ago)
+                    </span>
+                  </div>
                 ) : (
-                  <span style={{ color: '#15803d', fontWeight: '800', display: 'inline-block', marginTop: '0.2rem' }}>
-                    🟢 Live GPS Active
-                  </span>
+                  <div>
+                    <span style={{ color: '#15803d', fontWeight: '800', display: 'inline-block', marginTop: '0.2rem' }}>
+                      🟢 Live Telemetry ({liveTrip.current_location?.speed || 0} km/h)
+                    </span>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                      Lat: {vehicleLat.toFixed(4)} &bull; Lng: {vehicleLng.toFixed(4)}
+                    </div>
+                  </div>
                 )
               ) : (
                 <span style={{ color: '#6b7280', fontStyle: 'italic', display: 'inline-block', marginTop: '0.2rem' }}>
-                  Waiting for GPS location...
+                  Waiting for GPS packet...
                 </span>
               )}
             </div>

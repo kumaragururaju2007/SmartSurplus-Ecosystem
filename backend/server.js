@@ -20,6 +20,7 @@ const impactRoutes = require('./routes/impactRoutes');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const gpsRoutes = require('./routes/gpsRoutes');
 
 const timerService = require('./services/timerService');
 const { setNotificationIO } = require('./services/notificationService');
@@ -122,6 +123,7 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/payments', paymentRoutes);
 
 app.use('/api/admin', adminRoutes);
+app.use('/api/gps', gpsRoutes);
 
 // Root Health Check Route
 app.get('/api/health', (req, res) => {

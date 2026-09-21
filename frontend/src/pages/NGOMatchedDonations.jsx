@@ -448,7 +448,7 @@ export default function NGOMatchedDonations({ token }) {
                   </div>
 
                   <div
-                    onClick={() => setDispatchData(prev => ({ ...prev, trackingMethod: 'VEHICLE_IOT_GPS' }))}
+                    onClick={() => setDispatchData(prev => ({ ...prev, trackingMethod: 'VEHICLE_IOT_GPS', deviceId: prev.deviceId || 'TRUCK001' }))}
                     style={{
                       padding: '0.75rem',
                       border: dispatchData.trackingMethod === 'VEHICLE_IOT_GPS' ? '2px solid #d97706' : '1px solid #d1d5db',
@@ -463,6 +463,35 @@ export default function NGOMatchedDonations({ token }) {
                     </div>
                   </div>
                 </div>
+
+                {/* IoT Device ID & Hardware Instructions */}
+                {dispatchData.trackingMethod === 'VEHICLE_IOT_GPS' && (
+                  <div style={{ marginTop: '0.85rem', background: '#fffbeb', border: '1.5px solid #fde68a', borderRadius: '12px', padding: '0.9rem 1rem' }}>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '800', color: '#92400e', marginBottom: '0.35rem' }}>
+                      Hardware Device ID / IMEI *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. TRUCK001, ESP32-GPS-01, 86423004..."
+                      value={dispatchData.deviceId || ''}
+                      onChange={(e) => setDispatchData(prev => ({ ...prev, deviceId: e.target.value }))}
+                      style={{
+                        width: '100%',
+                        padding: '0.65rem 0.85rem',
+                        borderRadius: '8px',
+                        border: '1.5px solid #d97706',
+                        fontSize: '0.9rem',
+                        fontWeight: '700',
+                        color: '#78350f',
+                        background: '#ffffff',
+                        marginBottom: '0.4rem'
+                      }}
+                    />
+                    <div style={{ fontSize: '0.76rem', color: '#b45309', lineHeight: '1.4' }}>
+                      ⚡ <b>Physical GPS Tracker active:</b> The device will transmit live coordinates over GSM/4G/Wi-Fi to <code>/api/gps/location</code> and auto-glide the live map marker without browser GPS.
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Submit Buttons */}
